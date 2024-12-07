@@ -1,7 +1,7 @@
 Necessário: 
 - Java 21,
 - Maven,
-- MySQL Server na porta 3306 com database chamada 'web2'
+- PostgreSQL Server na porta 5432 com database chamada 'web2'
 
 No .env estão as configurações do Gmail Delivery Subsystem
 
