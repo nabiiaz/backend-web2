@@ -1,11 +1,14 @@
 package ufpr.web.controllers;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +29,7 @@ import ufpr.web.services.MaintenanceHistoryService;
 import ufpr.web.services.MaintenanceRequestService;
 import ufpr.web.types.dtos.CustomerDTO;
 import ufpr.web.types.dtos.EquipmentCategoryDTO;
+import ufpr.web.types.dtos.FilteredRequestDTO;
 import ufpr.web.types.dtos.MaintainDTO;
 import ufpr.web.types.dtos.MaintenanceHistoryDTO;
 import ufpr.web.types.dtos.MaintenanceRequestDTO;
@@ -213,6 +217,7 @@ public class RequestController {
             .maintenanceDescription(request.getMaintenanceDescription())
             .customerOrientation(request.getCustomerOrientation())
             .customerId(request.getCustomer().getId())
+            .employeeId(request.getEmployeeId())
             .build();
 
             List<MaintenanceHistoryDTO> historyDTOs = history.stream()
@@ -291,9 +296,9 @@ public class RequestController {
         
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
 
-        if (request.getStatus() != RequestStatus.PAGA) {
-            return ResponseEntity.badRequest().body("Serviço não foi pago");
-        }
+        // if (request.getStatus() != RequestStatus.PAGA) {
+        //     return ResponseEntity.badRequest().body("Serviço não foi pago");
+        // }
 
         Employee employee = employeeService.employee(employeeId);
 
@@ -363,5 +368,44 @@ public class RequestController {
 
         return ResponseEntity.ok().body("Solicitação redirecionada");
     }
+
+    @GetMapping("/requests/filtered")
+    public List<FilteredRequestDTO> getFilteredRequests(
+        @RequestParam(defaultValue = "TODAS") String filterType,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+        @RequestParam Long employeeId
+    ) {
+        List<MaintenanceRequest> filteredRequests = maintenanceRequestService.findFilteredRequests(
+            filterType, startDate, endDate, employeeId
+        );
+
+        return filteredRequests.stream()
+            .map(request -> {
+                Customer customer = customerService.customer(request.getCustomer().getId());
+
+                return FilteredRequestDTO.builder()
+                    .id(request.getId())
+                    .registryDate(request.getRegistryDate())
+                    .status(request.getStatus())
+                    .customerName(customer.getName())
+                    .equipmentDescription(request.getEquipmentDescription())
+                    .build();
+            })
+            .collect(Collectors.toList());
+    }
+
+    @GetMapping("/revenue/category")
+    public List<Map<String, Object>> getRevenueByEquipmentCategory() {
+        return maintenanceRequestService.calculateRevenueByEquipmentCategory();
+    }
+
+    @GetMapping("/revenue/daily")
+    public List<Map<String, Object>> getDailyRevenue(
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+    return maintenanceRequestService.calculateRevenueByDay(startDate, endDate);
+}
 
 }
