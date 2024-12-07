@@ -9,24 +9,24 @@ Para testar requisições, o Swagger fornece documentação interativa na URL [h
 
 Para tirar a autenticação com JWT, comente a configuração Http no arquivo security/SecurityConfig.java e descomente a outra
 
-- [x] RF001 /auth/register/customer
-- [x] RF002 /auth/login/customer || /auth/login/employee
-- [x] RF003 /requests?userId=
-- [x] RF004 /requests
-- [x] RF005 /requests/:requestId
-- [x] RF006 /requests/:requestId/approve
-- [x] RF007 /requests/:requestId/reject
-- [x] RF008 /requests/:requestId > falta informação do funcionário
-- [x] RF009 /requests/:requestId/redeem
-- [x] RF010 /requests/:requestId/pay
-- [x] RF011 /request/open
-- [x] RF012 /request/quote
+- [x] RF001 POST /auth/register/customer
+- [x] RF002 POST /auth/login/customer || /auth/login/employee
+- [x] RF003 GET  /requests?userId=
+- [x] RF004 POST /requests
+- [x] RF005 GET  /requests/:requestId
+- [x] RF006 PUT  /requests/:requestId/approve
+- [x] RF007 PUT  /requests/:requestId/reject
+- [x] RF008 GET  /requests/:requestId > falta informação do funcionário
+- [x] RF009 PUT  /requests/:requestId/redeem
+- [x] RF010 PUT  /requests/:requestId/pay
+- [x] RF011 GET  /request/open
+- [x] RF012 PUT  /request/:requestId/quote
 - [ ] RF013
 - [ ] RF014
 - [ ] RF015
-- [x] RF016 /request/:requestId/finish
-- [x] RF017 EquipmentCategoryController
-- [x] RF018 EmployeeController > para criar employee usa /auth/register/employee
+- [x] RF016 PUT  /request/:requestId/finish
+- [x] RF017 CRUD  EquipmentCategoryController
+- [x] RF018 CRUD  EmployeeController > para criar employee usa /auth/register/employee
 - [ ] RF019
 - [ ] RF020
 
