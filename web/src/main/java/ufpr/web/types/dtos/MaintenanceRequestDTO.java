@@ -24,4 +24,5 @@ public class MaintenanceRequestDTO {
     private String maintenanceDescription;
     private String customerOrientation;
     private Long customerId;
+    private Long employeeId;
 }

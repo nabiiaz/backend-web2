@@ -5,9 +5,10 @@ public enum RequestStatus {
     ORÇADA (1),
     APROVADA (2),
     REJEITADA (3),
-    ARRUMADA (4),
-    PAGA (5),
-    CONCLUIDA (6);
+    REDIRECIONADA(4),
+    ARRUMADA (5),
+    PAGA (6),
+    CONCLUIDA (7);
 
     private final int value;
 

@@ -23,7 +23,7 @@ Para tirar a autenticação com JWT, comente a configuração Http no arquivo se
 - [x] RF012 PUT  /request/:requestId/quote
 - [ ] RF013
 - [x] RF014 PUT  /request/:requestId/maintain
-- [ ] RF015
+- [x] RF015 PUT  /request/:requestId/redirect
 - [x] RF016 PUT  /request/:requestId/finish
 - [x] RF017 CRUD  EquipmentCategoryController
 - [x] RF018 CRUD  EmployeeController > para criar employee usa /auth/register/employee

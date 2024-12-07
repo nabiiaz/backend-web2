@@ -31,6 +31,7 @@ import ufpr.web.types.dtos.MaintenanceHistoryDTO;
 import ufpr.web.types.dtos.MaintenanceRequestDTO;
 import ufpr.web.types.dtos.OpenRequestDTO;
 import ufpr.web.types.dtos.QuoteRequestDTO;
+import ufpr.web.types.dtos.RedirectDTO;
 import ufpr.web.types.dtos.RequestWithHistoryAndCategoryDTO;
 import ufpr.web.types.enums.RequestStatus;
 
@@ -270,6 +271,7 @@ public class RequestController {
         }
 
         request.setQuote(quoteDTO.getQuoteAmount());
+        request.setEmployeeId(employee.getId());
         request.setStatus(RequestStatus.ORÇADA);
         MaintenanceRequest updatedRequest = maintenanceRequestService.save(request);
 
@@ -334,6 +336,32 @@ public class RequestController {
             .build());
 
         return ResponseEntity.ok().body("Manutenção concluída");
+    }
+
+    @PutMapping("/requests/{requestId}/redirect")
+    public ResponseEntity<String> redirectMaintenance(@PathVariable Long requestId, @RequestBody RedirectDTO dto) {
+        
+        if(dto.getEmployeeToRedirectId() == dto.getEmployeeId())
+            return ResponseEntity.badRequest().body("Não pode redirecionar a si");
+
+        MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        Employee employee = employeeService.employee(dto.getEmployeeId());
+        Employee employeeToRedirect = employeeService.employee(dto.getEmployeeToRedirectId());
+
+        request.setEmployeeId(employeeToRedirect != null ? employeeToRedirect.getId() : null);
+        request.setStatus(RequestStatus.REDIRECIONADA);
+        MaintenanceRequest updatedRequest = maintenanceRequestService.save(request);
+
+        maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
+            .maintenanceRequest(updatedRequest)
+            .status(RequestStatus.REDIRECIONADA)
+            .action("Solicitação redirecionada")
+            .actionDate(new Date(System.currentTimeMillis()))
+            .employee(employee)
+            .build());
+
+        return ResponseEntity.ok().body("Solicitação redirecionada");
     }
 
 }

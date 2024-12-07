@@ -58,6 +58,8 @@ public class MaintenanceRequest {
     @JoinColumn(name = "user_id")
     private Customer customer; 
 
+    private Long employeeId;
+
     @OneToMany(mappedBy = "maintenanceRequest")
     private List<MaintenanceRequestHistory> history;
 }
