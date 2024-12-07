@@ -11,7 +11,7 @@ Para tirar a autenticação com JWT, comente a configuração Http no arquivo se
 
 - [x] RF001 POST /auth/register/customer
 - [x] RF002 POST /auth/login/customer || /auth/login/employee
-- [x] RF003 GET  /requests?userId=
+- [x] RF003 GET  /requests
 - [x] RF004 POST /requests
 - [x] RF005 GET  /requests/:requestId
 - [x] RF006 PUT  /requests/:requestId/approve
@@ -19,14 +19,14 @@ Para tirar a autenticação com JWT, comente a configuração Http no arquivo se
 - [x] RF008 GET  /requests/:requestId
 - [x] RF009 PUT  /requests/:requestId/redeem
 - [x] RF010 PUT  /requests/:requestId/pay
-- [x] RF011 GET  /request/open
-- [x] RF012 PUT  /request/:requestId/quote
-- [ ] RF013
-- [x] RF014 PUT  /request/:requestId/maintain
-- [x] RF015 PUT  /request/:requestId/redirect
+- [x] RF011 GET  /requests/open
+- [x] RF012 PUT  /requests/:requestId/quote
+- [x] RF013 GET  /requests/filtered
+- [x] RF014 PUT  /requests/:requestId/maintain
+- [x] RF015 PUT  /requests/:requestId/redirect
 - [x] RF016 PUT  /request/:requestId/finish
 - [x] RF017 CRUD  EquipmentCategoryController
 - [x] RF018 CRUD  EmployeeController > para criar employee usa /auth/register/employee
-- [ ] RF019
-- [ ] RF020
+- [x] RF019 GET  /revenue/daily
+- [x] RF020 GET  /revenue/category
 
