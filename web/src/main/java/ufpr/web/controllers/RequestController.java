@@ -24,7 +24,9 @@ import ufpr.web.services.EmployeeService;
 import ufpr.web.services.EquipmentCategoryService;
 import ufpr.web.services.MaintenanceHistoryService;
 import ufpr.web.services.MaintenanceRequestService;
+import ufpr.web.types.dtos.CustomerDTO;
 import ufpr.web.types.dtos.EquipmentCategoryDTO;
+import ufpr.web.types.dtos.MaintainDTO;
 import ufpr.web.types.dtos.MaintenanceHistoryDTO;
 import ufpr.web.types.dtos.MaintenanceRequestDTO;
 import ufpr.web.types.dtos.OpenRequestDTO;
@@ -88,7 +90,7 @@ public class RequestController {
         maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
             .maintenanceRequest(savedRequest)
             .status(RequestStatus.ABERTA)
-            .action("Created")
+            .action("Solicitação Aberta")
             .actionDate(new Date(System.currentTimeMillis()))
             .build());
 
@@ -107,6 +109,11 @@ public class RequestController {
     @PutMapping("/requests/{requestId}/approve")
     public ResponseEntity<String> approveService(@PathVariable Long requestId) {
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.ORÇADA) {
+            return ResponseEntity.badRequest().body("Serviço não foi orçado");
+        }
+
         request.setStatus(RequestStatus.APROVADA);
 
         maintenanceRequestService.save(request);
@@ -114,16 +121,21 @@ public class RequestController {
         maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
             .maintenanceRequest(request)
             .status(RequestStatus.APROVADA)
-            .action("Aprovada")
+            .action("Orçamento Aprovado")
             .actionDate(new Date(System.currentTimeMillis()))
             .build());
 
-        return ResponseEntity.ok().body("Serviço aprovado no valor de: " + request.getQuote());
+        return ResponseEntity.ok().body("Orçamento Aprovado no valor de: " + request.getQuote());
     }
 
     @PutMapping("/requests/{requestId}/reject")
     public ResponseEntity<String> rejectService(@PathVariable Long requestId) {
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.ORÇADA) {
+            return ResponseEntity.badRequest().body("Serviço não foi orçado");
+        }
+
         request.setStatus(RequestStatus.REJEITADA);
 
         maintenanceRequestService.save(request);
@@ -131,16 +143,21 @@ public class RequestController {
         maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
             .maintenanceRequest(request)
             .status(RequestStatus.REJEITADA)
-            .action("Rejeitada")
+            .action("Orçamento Rejeitado")
             .actionDate(new Date(System.currentTimeMillis()))
             .build());
 
-            return ResponseEntity.ok().body("Serviço rejeitado");
+            return ResponseEntity.ok().body("Orçamento rejeitado");
     }
 
     @PutMapping("/requests/{requestId}/redeem")
     public ResponseEntity<String> redeemService(@PathVariable Long requestId) {
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.REJEITADA) {
+            return ResponseEntity.badRequest().body("Serviço não estava rejeitado");
+        }
+
         request.setStatus(RequestStatus.APROVADA);
 
         maintenanceRequestService.save(request);
@@ -148,28 +165,33 @@ public class RequestController {
         maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
             .maintenanceRequest(request)
             .status(RequestStatus.APROVADA)
-            .action("Resgatada")
+            .action("Solicitação resgatada")
             .actionDate(new Date(System.currentTimeMillis()))
             .build());
 
-            return ResponseEntity.ok().body("Serviço resgatado");
+            return ResponseEntity.ok().body("Solicitação resgatada");
     }
 
     @PutMapping("/requests/{requestId}/pay")
     public ResponseEntity<String> payService(@PathVariable Long requestId) {
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.ARRUMADA) {
+            return ResponseEntity.badRequest().body("Serviço não foi arrumado");
+        }
+
         request.setStatus(RequestStatus.PAGA);
 
         maintenanceRequestService.save(request);
 
         maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
             .maintenanceRequest(request)
-            .status(RequestStatus.APROVADA)
+            .status(RequestStatus.PAGA)
             .action("Pago")
             .actionDate(new Date(System.currentTimeMillis()))
             .build());
 
-            return ResponseEntity.ok().body("Serviço pago");
+            return ResponseEntity.ok().body("Solicitação paga");
     }
 
     @GetMapping("/requests/{requestId}")
@@ -187,6 +209,8 @@ public class RequestController {
             .quote(request.getQuote())
             .status(request.getStatus())
             .registryDate(request.getRegistryDate())
+            .maintenanceDescription(request.getMaintenanceDescription())
+            .customerOrientation(request.getCustomerOrientation())
             .customerId(request.getCustomer().getId())
             .build();
 
@@ -198,6 +222,7 @@ public class RequestController {
                     .action(h.getAction())
                     .employeeId(h.getEmployee() != null ? h.getEmployee().getId() : -1)
                     .actionDate(h.getActionDate())
+                    .employeeDTO(h.getEmployee() != null ? employeeService.getEmployee(h.getEmployee().getId()) : null)
                     .build())
                 .collect(Collectors.toList());
 
@@ -206,10 +231,13 @@ public class RequestController {
                 .name(request.getEquipmentCategory().getName())
                 .build();
 
+            CustomerDTO customerDTO = customerService.getCustomer(request.getCustomer() != null ? request.getCustomer().getId() : null);
+
         return RequestWithHistoryAndCategoryDTO.builder()
             .maintenanceRequest(maintenanceRequestDTO)
             .history(historyDTOs)
             .equipmentCategory(categoryDTO)
+            .customer(customerDTO)
             .build();
     }
 
@@ -254,6 +282,58 @@ public class RequestController {
             .build());
 
         return ResponseEntity.ok().body("Orçamento feito no valor de: " + quoteDTO.getQuoteAmount());
+    }
+
+    @PutMapping("/requests/{requestId}/finish")
+    public ResponseEntity<String> finishMaintenance(@PathVariable Long requestId, @RequestBody Long employeeId) {
+        
+        MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.PAGA) {
+            return ResponseEntity.badRequest().body("Serviço não foi pago");
+        }
+
+        Employee employee = employeeService.employee(employeeId);
+
+        request.setStatus(RequestStatus.CONCLUIDA);
+        MaintenanceRequest updatedRequest = maintenanceRequestService.save(request);
+
+        maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
+            .maintenanceRequest(updatedRequest)
+            .status(RequestStatus.CONCLUIDA)
+            .action("Solicitação concluida")
+            .actionDate(new Date(System.currentTimeMillis()))
+            .employee(employee)
+            .build());
+
+        return ResponseEntity.ok().body("Solicitação concluída");
+    }
+
+    @PutMapping("/requests/{requestId}/maintain")
+    public ResponseEntity<String> doMaintenance(@PathVariable Long requestId, @RequestBody MaintainDTO maintainDTO) {
+        
+        MaintenanceRequest request = maintenanceRequestService.findById(requestId);
+
+        if (request.getStatus() != RequestStatus.APROVADA) {
+            return ResponseEntity.badRequest().body("Serviço não foi aprovado");
+        }
+
+        Employee employee = employeeService.employee(maintainDTO.getEmployeeId());
+
+        request.setMaintenanceDescription(maintainDTO.getMaintenanceDescription());
+        request.setCustomerOrientation(maintainDTO.getCustomerOrientation());
+        request.setStatus(RequestStatus.ARRUMADA);
+        MaintenanceRequest updatedRequest = maintenanceRequestService.save(request);
+
+        maintenanceHistoryService.save(MaintenanceRequestHistory.builder()
+            .maintenanceRequest(updatedRequest)
+            .status(RequestStatus.ARRUMADA)
+            .action("Arrumada")
+            .actionDate(new Date(System.currentTimeMillis()))
+            .employee(employee)
+            .build());
+
+        return ResponseEntity.ok().body("Manutenção concluída");
     }
 
 }

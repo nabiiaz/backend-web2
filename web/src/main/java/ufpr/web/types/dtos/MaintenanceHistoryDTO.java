@@ -19,4 +19,5 @@ public class MaintenanceHistoryDTO {
     private String action;
     private Long employeeId;
     private Date actionDate;
+    private EmployeeDTO employeeDTO;
 }

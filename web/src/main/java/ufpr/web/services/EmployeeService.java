@@ -67,12 +67,10 @@ public class EmployeeService {
     }
 
     private EmployeeDTO mapToDTO(Employee employee) {
-        return new EmployeeDTO(
-            employee.getId(),
-            employee.getEmail(),
-            employee.getName(),
-            employee.getBirthDate(),
-            employee.getPassword()
-        );
+        return EmployeeDTO.builder()
+            .id(employee.getId())
+            .name(employee.getName())
+            .email(employee.getEmail())
+            .build();
     }
 }

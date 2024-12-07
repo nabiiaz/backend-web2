@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ufpr.web.entities.Customer;
 
 @Data
 @Builder
@@ -16,5 +15,5 @@ public class RequestWithHistoryAndCategoryDTO {
     private MaintenanceRequestDTO maintenanceRequest;
     private List<MaintenanceHistoryDTO> history;
     private EquipmentCategoryDTO equipmentCategory;
-    private Customer customer;
+    private CustomerDTO customer;
 }

@@ -21,5 +21,7 @@ public class MaintenanceRequestDTO {
     private Double quote;
     private RequestStatus status;
     private LocalDateTime registryDate;
+    private String maintenanceDescription;
+    private String customerOrientation;
     private Long customerId;
 }

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -46,6 +47,12 @@ public class MaintenanceRequest {
     private RequestStatus status;
 
     private LocalDateTime registryDate;
+
+    @Column(nullable = true)
+    private String maintenanceDescription;
+
+    @Column(nullable = true)
+    private String customerOrientation;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

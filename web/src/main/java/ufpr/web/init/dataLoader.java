@@ -29,6 +29,14 @@ public class dataLoader implements ApplicationRunner{
             .name("João")
             .cpf("10120230344")
             .email("joão@email.com")
+            .phone("41999422222")
+            .street("Rua Coronel Dulcidio")
+            .zipCode("80000-240")
+            .addressComplement("casa")
+            .addressNumber("333")
+            .city("Curitiba")
+            .neighborhood("Batel")
+            .state("Parana")
             .build()
         );
 

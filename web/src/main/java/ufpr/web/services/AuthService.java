@@ -143,7 +143,7 @@ public class AuthService {
 
         try {
             emailService.sendSimpleMessage(to,
-                "Senha para Manuntenção de Equipamentos do TADS", 
+                "Senha para Manutenção de Equipamentos do TADS", 
                     "Sua senha de quatro dígitos é: " + rawPassword);
         } catch (Exception e) {
             System.err.println("Failed to send registration email: " + e.getMessage());
