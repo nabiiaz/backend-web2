@@ -16,13 +16,13 @@ Para tirar a autenticação com JWT, comente a configuração Http no arquivo se
 - [x] RF005 GET  /requests/:requestId
 - [x] RF006 PUT  /requests/:requestId/approve
 - [x] RF007 PUT  /requests/:requestId/reject
-- [x] RF008 GET  /requests/:requestId > falta informação do funcionário
+- [x] RF008 GET  /requests/:requestId
 - [x] RF009 PUT  /requests/:requestId/redeem
 - [x] RF010 PUT  /requests/:requestId/pay
 - [x] RF011 GET  /request/open
 - [x] RF012 PUT  /request/:requestId/quote
 - [ ] RF013
-- [ ] RF014
+- [x] RF014 PUT  /request/:requestId/maintain
 - [ ] RF015
 - [x] RF016 PUT  /request/:requestId/finish
 - [x] RF017 CRUD  EquipmentCategoryController
