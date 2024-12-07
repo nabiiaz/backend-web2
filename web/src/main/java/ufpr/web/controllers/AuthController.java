@@ -32,19 +32,9 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(employee);
     }
 
-    @PostMapping("/login/customer")
-    public ResponseEntity<AuthResponseDTO> loginCustomer(
-        @RequestBody AuthRequestDTO dto
-    ) {
-        AuthResponseDTO response = authService.loginCustomer(dto);
-        return ResponseEntity.ok(response);
-    }
-
-    @PostMapping("/login/employee")
-    public ResponseEntity<AuthResponseDTO> loginEmployee(
-        @RequestBody AuthRequestDTO dto
-    ) {
-        AuthResponseDTO response = authService.loginEmployee(dto);
+    @PostMapping("/login")
+    public ResponseEntity<AuthResponseDTO> login(@RequestBody AuthRequestDTO dto) {
+        AuthResponseDTO response = authService.login(dto);
         return ResponseEntity.ok(response);
     }
 }

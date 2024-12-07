@@ -12,8 +12,10 @@ import lombok.RequiredArgsConstructor;
 import ufpr.web.entities.Address;
 import ufpr.web.entities.Customer;
 import ufpr.web.entities.Employee;
+import ufpr.web.entities.User;
 import ufpr.web.repositories.CustomerRepository;
 import ufpr.web.repositories.EmployeeRepository;
+import ufpr.web.repositories.UserRepository;
 import ufpr.web.security.JwtTokenProvider;
 import ufpr.web.types.dtos.AuthRequestDTO;
 import ufpr.web.types.dtos.AuthResponseDTO;
@@ -27,6 +29,7 @@ import java.util.Random;
 public class AuthService {
     private final CustomerRepository customerRepository;
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
@@ -90,8 +93,7 @@ public class AuthService {
         return employeeRepository.save(employee);
     }
 
-    public AuthResponseDTO loginCustomer(AuthRequestDTO loginRequest) {
-
+    public AuthResponseDTO login(AuthRequestDTO loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
             new UsernamePasswordAuthenticationToken(
                 loginRequest.getEmail(), 
@@ -99,42 +101,16 @@ public class AuthService {
             )
         );
 
-        Customer customer = customerRepository.findByEmail(loginRequest.getEmail())
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-
-        String token = jwtTokenProvider.generateToken(authentication);
-
-        System.out.println("*****************JWT TOKEN************************");
-        System.out.println(token);
-        System.out.println("**************************************************");
-
-        return new AuthResponseDTO(
-            customer.getId(), 
-            customer.getName(), 
-            customer.getEmail(), 
-            customer.getRole(), 
-            token
-        );
-    }
-
-    public AuthResponseDTO loginEmployee(AuthRequestDTO loginRequest) {
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(
-                loginRequest.getEmail(), 
-                loginRequest.getPassword()
-            )
-        );
-
-        Employee employee = employeeRepository.findByEmail(loginRequest.getEmail())
+        User user = userRepository.findByEmail(loginRequest.getEmail())
             .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         String token = jwtTokenProvider.generateToken(authentication);
 
         return new AuthResponseDTO(
-            employee.getId(), 
-            employee.getName(), 
-            employee.getEmail(), 
-            employee.getRole(), 
+            user.getId(), 
+            user.getName(), 
+            user.getEmail(), 
+            user.getRole(), 
             token
         );
     }
