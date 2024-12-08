@@ -12,12 +12,16 @@ import ufpr.web.services.AuthService;
 import ufpr.web.services.EquipmentCategoryService;
 import ufpr.web.services.MaintenanceRequestService;
 import ufpr.web.services.CustomerService;
+import ufpr.web.services.EmployeeService;
 import ufpr.web.types.dtos.CustomerDTO;
 import ufpr.web.types.dtos.EmployeeDTO;
 import ufpr.web.types.dtos.EquipmentCategoryDTO;
 import ufpr.web.types.dtos.MaintenanceRequestDTO;
 import ufpr.web.entities.MaintenanceRequest;
 import ufpr.web.types.enums.RequestStatus;
+import ufpr.web.controllers.RequestController;
+import ufpr.web.types.dtos.QuoteRequestDTO;
+import ufpr.web.types.dtos.MaintainDTO;
 
 @Component
 @AllArgsConstructor
@@ -35,12 +39,18 @@ public class dataLoader implements ApplicationRunner{
     @Autowired
     private CustomerService customerService;
 
+    @Autowired
+    private EmployeeService employeeService;
+
+    @Autowired
+    private RequestController requestController;
+
     @Override
     public void run(ApplicationArguments args) throws Exception{
         authService.registerCustomer(CustomerDTO.builder()
             .name("João")
             .cpf("10120230344")
-            .email("joão@email.com")
+            .email("joao@email.com")
             .phone("41999422222")
             .street("Rua Coronel Dulcidio")
             .zipCode("80000-240")
@@ -55,7 +65,7 @@ public class dataLoader implements ApplicationRunner{
         authService.registerCustomer(CustomerDTO.builder()
             .name("José")
             .cpf("11122233344455")
-            .email("josé@email.com")
+            .email("jose@email.com")
             .build()
         );
 
@@ -121,55 +131,78 @@ public class dataLoader implements ApplicationRunner{
                 .build()
         );
 
-        maintenanceRequestService.save(MaintenanceRequest.builder()
+        MaintenanceRequest request2 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Notebook Acer")
             .equipmentCategory(equipmentCategoryService.findByName("Notebook"))
             .equipmentDefect("Tela quebrada")
-            .status(RequestStatus.ORÇADA)
+            .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now().minusDays(4))
             .customer(customerService.findByCpf("10120230344"))
             .build()
         );
 
-        maintenanceRequestService.save(MaintenanceRequest.builder()
+        MaintenanceRequest request3 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Desktop Lenovo")
             .equipmentCategory(equipmentCategoryService.findByName("Desktop"))
             .equipmentDefect("Fonte queimada")
-            .status(RequestStatus.APROVADA)
+            .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now().minusDays(3))
             .customer(customerService.findByCpf("10120230344"))
             .build()
         );
 
-        maintenanceRequestService.save(MaintenanceRequest.builder()
+        MaintenanceRequest request4 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Mouse Razer")
             .equipmentCategory(equipmentCategoryService.findByName("Mouse"))
             .equipmentDefect("Scroll com defeito")
-            .status(RequestStatus.REJEITADA)
+            .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now().minusDays(2))
             .customer(customerService.findByCpf("10120230344"))
             .build()
         );
 
-        maintenanceRequestService.save(MaintenanceRequest.builder()
+        MaintenanceRequest request5 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Teclado Corsair")
             .equipmentCategory(equipmentCategoryService.findByName("Teclado"))
             .equipmentDefect("LEDs queimados")
-            .status(RequestStatus.ARRUMADA)
+            .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now().minusDays(1))
             .customer(customerService.findByCpf("10120230344"))
             .build()
         );
 
-        maintenanceRequestService.save(MaintenanceRequest.builder()
+        MaintenanceRequest request6 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Impressora HP")
             .equipmentCategory(equipmentCategoryService.findByName("Impressora"))
             .equipmentDefect("Papel atolando")
-            .status(RequestStatus.PAGA)
+            .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now())
             .customer(customerService.findByCpf("10120230344"))
             .build()
         );
+
+        // Now update their status using controller methods
+        // For request2 (ORÇADA)
+        requestController.createQuote(request2.getId(), new QuoteRequestDTO(employeeService.findFirst().getId(), 150.0));
+
+        // For request3 (APROVADA)
+        requestController.createQuote(request3.getId(), new QuoteRequestDTO(employeeService.findFirst().getId(), 200.0));
+        requestController.approveService(request3.getId());
+
+        // For request4 (REJEITADA)
+        requestController.createQuote(request4.getId(), new QuoteRequestDTO(employeeService.findFirst().getId(), 300.0));
+        requestController.rejectService(request4.getId());
+
+        // For request5 (ARRUMADA)
+        requestController.createQuote(request5.getId(), new QuoteRequestDTO(employeeService.findFirst().getId(), 180.0));
+        requestController.approveService(request5.getId());
+        requestController.doMaintenance(request5.getId(), new MaintainDTO(employeeService.findFirst().getId(), "Manutenção realizada", "Cuidado ao usar"));
+
+        // For request6 (PAGA)
+        requestController.createQuote(request6.getId(), new QuoteRequestDTO(employeeService.findFirst().getId(), 250.0));
+        requestController.approveService(request6.getId());
+        requestController.doMaintenance(request6.getId(), new MaintainDTO(employeeService.findFirst().getId(), "Manutenção realizada", "Limpar periodicamente"));
+        requestController.payService(request6.getId());
     }
 
 }

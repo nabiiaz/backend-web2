@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class QuoteRequestDTO {
-    
-    private Double quoteAmount;
     private Long employeeId;
-    
+    private Double quoteAmount;
 }
