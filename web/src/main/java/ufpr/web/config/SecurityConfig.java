@@ -19,21 +19,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
-        // http
-        //     .csrf(csrf -> csrf.disable())
-        //     .cors(cors -> {})
-        //     .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-        //     .authorizeHttpRequests(authz -> authz
-        //         .requestMatchers("/auth/login/**", "/auth/register/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
-        //         .anyRequest().authenticated()
-        //     )
-        //     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         http
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz 
-                .anyRequest().permitAll()
-            );
+            .cors(cors -> {})
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(authz -> authz
+                .requestMatchers("/auth/login/**", "/auth/register/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // http
+        //     .csrf(csrf -> csrf.disable())
+        //     .authorizeHttpRequests(authz -> authz 
+        //         .anyRequest().permitAll()
+        //     );
         
         return http.build();
     }

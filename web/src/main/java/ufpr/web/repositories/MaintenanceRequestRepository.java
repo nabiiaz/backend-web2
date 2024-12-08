@@ -17,11 +17,11 @@ public interface MaintenanceRequestRepository extends JpaRepository<MaintenanceR
     List<MaintenanceRequest> findByCustomerIdOrderByRegistryDateAsc(Long userId);
     List<MaintenanceRequest> findByStatusOrderByRegistryDateAsc(RequestStatus status);
 
-    @Query("SELECT mr FROM MaintenanceRequest mr " +
-           "WHERE (:status IS NULL OR mr.status = :status) " +
-           "AND (:startDate IS NULL OR mr.registryDate >= :startDate) " +
-           "AND (:endDate IS NULL OR mr.registryDate <= :endDate) " +
-           "AND (:employeeId IS NULL OR mr.employeeId = :employeeId) " +
+    @Query(value = "SELECT mr FROM MaintenanceRequest mr " +
+           "WHERE (CAST(:status AS string) IS NULL OR mr.status = :status) " +
+           "AND (CAST(:startDate AS timestamp) IS NULL OR mr.registryDate >= :startDate) " +
+           "AND (CAST(:endDate AS timestamp) IS NULL OR mr.registryDate <= :endDate) " +
+           "AND (mr.employeeId IS NULL OR mr.employeeId = :employeeId) " +
            "ORDER BY mr.registryDate ASC")
     List<MaintenanceRequest> findFilteredRequests(
         @Param("status") RequestStatus status,
