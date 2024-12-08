@@ -37,6 +37,7 @@ import ufpr.web.types.dtos.QuoteRequestDTO;
 import ufpr.web.types.dtos.RedirectDTO;
 import ufpr.web.types.dtos.RequestWithHistoryAndCategoryDTO;
 import ufpr.web.types.enums.RequestStatus;
+import ufpr.web.security.annotations.EmployeeRequestAccess;
 
 @RestController
 public class RequestController {
@@ -199,6 +200,7 @@ public class RequestController {
     }
 
     @GetMapping("/requests/{requestId}")
+    @EmployeeRequestAccess
     public RequestWithHistoryAndCategoryDTO getRequestById(@PathVariable Long requestId) {
         
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
@@ -265,6 +267,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{requestId}/quote")
+    @EmployeeRequestAccess
     public ResponseEntity<String> createQuote(@PathVariable Long requestId, @RequestBody QuoteRequestDTO quoteDTO) {
         
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
@@ -316,6 +319,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{requestId}/maintain")
+    @EmployeeRequestAccess
     public ResponseEntity<String> doMaintenance(@PathVariable Long requestId, @RequestBody MaintainDTO maintainDTO) {
         
         MaintenanceRequest request = maintenanceRequestService.findById(requestId);
@@ -343,6 +347,7 @@ public class RequestController {
     }
 
     @PutMapping("/requests/{requestId}/redirect")
+    @EmployeeRequestAccess
     public ResponseEntity<String> redirectMaintenance(@PathVariable Long requestId, @RequestBody RedirectDTO dto) {
         
         if(dto.getEmployeeToRedirectId() == dto.getEmployeeId())

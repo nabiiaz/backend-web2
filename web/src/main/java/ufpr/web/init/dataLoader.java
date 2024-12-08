@@ -66,6 +66,14 @@ public class dataLoader implements ApplicationRunner{
             .name("José")
             .cpf("11122233344455")
             .email("jose@email.com")
+            .phone("41999433333")
+            .street("Rua XV de Novembro")
+            .zipCode("80020-310")
+            .addressComplement("apto 401")
+            .addressNumber("123")
+            .city("Curitiba")
+            .neighborhood("Centro")
+            .state("Parana")
             .build()
         );
 
@@ -73,6 +81,14 @@ public class dataLoader implements ApplicationRunner{
             .name("Joana")
             .cpf("99988877766")
             .email("joana@email.com")
+            .phone("41999444444")
+            .street("Avenida Silva Jardim")
+            .zipCode("80230-000")
+            .addressComplement("bloco B")
+            .addressNumber("1500")
+            .city("Curitiba")
+            .neighborhood("Água Verde")
+            .state("Parana")
             .build()
         );
 
@@ -80,6 +96,14 @@ public class dataLoader implements ApplicationRunner{
             .name("Joaquina")
             .cpf("12345678911")
             .email("joaquina@email.com")
+            .phone("41999455555")
+            .street("Rua Padre Anchieta")
+            .zipCode("80410-030")
+            .addressComplement("casa")
+            .addressNumber("2000")
+            .city("Curitiba")
+            .neighborhood("Bigorrilho")
+            .state("Parana")
             .build()
         );
 
@@ -131,6 +155,7 @@ public class dataLoader implements ApplicationRunner{
                 .build()
         );
 
+
         MaintenanceRequest request2 = maintenanceRequestService.save(MaintenanceRequest.builder()
             .equipmentDescription("Notebook Acer")
             .equipmentCategory(equipmentCategoryService.findByName("Notebook"))
@@ -178,6 +203,16 @@ public class dataLoader implements ApplicationRunner{
             .status(RequestStatus.ABERTA)
             .registryDate(LocalDateTime.now())
             .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
+
+        MaintenanceRequest request7 = maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Mouse Logitech")
+            .equipmentCategory(equipmentCategoryService.findByName("Mouse"))
+            .equipmentDefect("Botão do meio queimado")
+            .status(RequestStatus.ABERTA) 
+            .registryDate(LocalDateTime.now())
+            .customer(customerService.findByCpf("11122233344455"))
             .build()
         );
 

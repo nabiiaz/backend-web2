@@ -80,4 +80,9 @@ public class EmployeeService {
             .findFirst()
             .orElseThrow(() -> new RuntimeException("No employees found"));
     }
+
+    public Employee findByEmail(String email) {
+        return employeeRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Employee not found"));
+    }
 }
