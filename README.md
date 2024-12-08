@@ -9,6 +9,8 @@ Para testar requisições, o Swagger fornece documentação interativa na URL [h
 
 Para tirar a autenticação com JWT, comente a configuração Http no arquivo security/SecurityConfig.java e descomente a outra
 
+## 🚩 -> Falta integração com o frontend.
+
 - [x] RF001 POST /auth/register/customer
 - [x] RF002 POST /auth/login/customer || /auth/login/employee
 - [x] RF003 GET  /requests
@@ -25,8 +27,8 @@ Para tirar a autenticação com JWT, comente a configuração Http no arquivo se
 - [x] RF014 PUT  /requests/:requestId/maintain
 - [x] RF015 PUT  /requests/:requestId/redirect
 - [x] RF016 PUT  /request/:requestId/finish
-- [x] RF017 CRUD  EquipmentCategoryController
-- [x] RF018 CRUD  EmployeeController > para criar employee usa /auth/register/employee
-- [x] RF019 GET  /revenue/daily
-- [x] RF020 GET  /revenue/category
+- [x] RF017 CRUD  EquipmentCategoryController🚩
+- [x] RF018 CRUD  EmployeeController > para criar employee usa /auth/register/employee🚩
+- [x] RF019 GET  /revenue/daily🚩
+- [x] RF020 GET  /revenue/category🚩
 
