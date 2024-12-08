@@ -408,4 +408,22 @@ public class RequestController {
     return maintenanceRequestService.calculateRevenueByDay(startDate, endDate);
 }
 
+    @GetMapping("/requests/history")
+    public List<MaintenanceHistoryDTO> getRequestHistoryByCustomerId(@RequestParam Long customerId) {
+        List<MaintenanceRequest> customerRequests = maintenanceRequestService.findRequestsByUserId(customerId);
+        
+        return customerRequests.stream()
+            .flatMap(request -> maintenanceHistoryService.findByRequestId(request.getId()).stream())
+            .map(history -> MaintenanceHistoryDTO.builder()
+                .id(history.getId())
+                .requestId(history.getMaintenanceRequest().getId())
+                .status(history.getStatus())
+                .action(history.getAction())
+                .employeeId(history.getEmployee() != null ? history.getEmployee().getId() : -1)
+                .actionDate(history.getActionDate())
+                .employeeDTO(history.getEmployee() != null ? employeeService.getEmployee(history.getEmployee().getId()) : null)
+                .build())
+            .collect(Collectors.toList());
+    }
+
 }
