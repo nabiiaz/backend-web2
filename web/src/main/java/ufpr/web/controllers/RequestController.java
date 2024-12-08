@@ -1,6 +1,5 @@
 package ufpr.web.controllers;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -96,7 +95,7 @@ public class RequestController {
             .maintenanceRequest(savedRequest)
             .status(RequestStatus.ABERTA)
             .action("Solicitação Aberta")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .build());
 
         return MaintenanceRequestDTO.builder()
@@ -127,7 +126,7 @@ public class RequestController {
             .maintenanceRequest(request)
             .status(RequestStatus.APROVADA)
             .action("Orçamento Aprovado")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .build());
 
         return ResponseEntity.ok().body("Orçamento Aprovado no valor de: " + request.getQuote());
@@ -149,7 +148,7 @@ public class RequestController {
             .maintenanceRequest(request)
             .status(RequestStatus.REJEITADA)
             .action("Orçamento Rejeitado")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .build());
 
             return ResponseEntity.ok().body("Orçamento rejeitado");
@@ -171,7 +170,7 @@ public class RequestController {
             .maintenanceRequest(request)
             .status(RequestStatus.APROVADA)
             .action("Solicitação resgatada")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .build());
 
             return ResponseEntity.ok().body("Solicitação resgatada");
@@ -193,7 +192,7 @@ public class RequestController {
             .maintenanceRequest(request)
             .status(RequestStatus.PAGA)
             .action("Pago")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .build());
 
             return ResponseEntity.ok().body("Solicitação paga");
@@ -284,7 +283,7 @@ public class RequestController {
             .maintenanceRequest(updatedRequest)
             .status(RequestStatus.ORÇADA)
             .action("Orçamento feito")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .employee(employee)
             .build());
 
@@ -309,7 +308,7 @@ public class RequestController {
             .maintenanceRequest(updatedRequest)
             .status(RequestStatus.CONCLUIDA)
             .action("Solicitação concluida")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .employee(employee)
             .build());
 
@@ -336,7 +335,7 @@ public class RequestController {
             .maintenanceRequest(updatedRequest)
             .status(RequestStatus.ARRUMADA)
             .action("Arrumada")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .employee(employee)
             .build());
 
@@ -362,7 +361,7 @@ public class RequestController {
             .maintenanceRequest(updatedRequest)
             .status(RequestStatus.REDIRECIONADA)
             .action("Solicitação redirecionada")
-            .actionDate(new Date(System.currentTimeMillis()))
+            .actionDate(LocalDateTime.now())
             .employee(employee)
             .build());
 
@@ -407,5 +406,23 @@ public class RequestController {
     ) {
     return maintenanceRequestService.calculateRevenueByDay(startDate, endDate);
 }
+
+    @GetMapping("/requests/history")
+    public List<MaintenanceHistoryDTO> getRequestHistoryByCustomerId(@RequestParam Long customerId) {
+        List<MaintenanceRequest> customerRequests = maintenanceRequestService.findRequestsByUserId(customerId);
+        
+        return customerRequests.stream()
+            .flatMap(request -> maintenanceHistoryService.findByRequestId(request.getId()).stream())
+            .map(history -> MaintenanceHistoryDTO.builder()
+                .id(history.getId())
+                .requestId(history.getMaintenanceRequest().getId())
+                .status(history.getStatus())
+                .action(history.getAction())
+                .employeeId(history.getEmployee() != null ? history.getEmployee().getId() : -1)
+                .actionDate(history.getActionDate())
+                .employeeDTO(history.getEmployee() != null ? employeeService.getEmployee(history.getEmployee().getId()) : null)
+                .build())
+            .collect(Collectors.toList());
+    }
 
 }

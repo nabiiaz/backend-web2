@@ -1,6 +1,7 @@
 package ufpr.web.entities;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 
 import jakarta.persistence.Entity;
@@ -43,5 +44,5 @@ public class MaintenanceRequestHistory {
     @JoinColumn(name = "employee_id", nullable = true)
     private Employee employee;
 
-    private Date actionDate;
+    private LocalDateTime actionDate;
 }

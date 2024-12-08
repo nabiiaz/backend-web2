@@ -73,4 +73,11 @@ public class EmployeeService {
             .email(employee.getEmail())
             .build();
     }
+
+    public Employee findFirst() {
+        return employeeRepository.findAll()
+            .stream()
+            .findFirst()
+            .orElseThrow(() -> new RuntimeException("No employees found"));
+    }
 }

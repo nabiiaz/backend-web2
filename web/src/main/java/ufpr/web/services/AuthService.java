@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import ufpr.web.entities.Address;
 import ufpr.web.entities.Customer;
 import ufpr.web.entities.Employee;
@@ -26,6 +27,7 @@ import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
     private final CustomerRepository customerRepository;
     private final EmployeeRepository employeeRepository;
@@ -70,7 +72,8 @@ public class AuthService {
         customerRepository.save(customer);
         // sendEmail(customer.getEmail(), rawPassword);
 
-        System.out.println(rawPassword);
+        System.out.println(customer.getName() + " password: " + rawPassword);
+
         return customer;
     }
 
