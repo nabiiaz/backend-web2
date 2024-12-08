@@ -35,7 +35,7 @@ public class MaintenanceRequest {
 
     private String equipmentDescription;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name= "equipment_category_id")
     private EquipmentCategory equipmentCategory;
 
