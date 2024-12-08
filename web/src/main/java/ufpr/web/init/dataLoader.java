@@ -1,6 +1,7 @@
 package ufpr.web.init;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
@@ -9,9 +10,14 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import ufpr.web.services.AuthService;
 import ufpr.web.services.EquipmentCategoryService;
+import ufpr.web.services.MaintenanceRequestService;
+import ufpr.web.services.CustomerService;
 import ufpr.web.types.dtos.CustomerDTO;
 import ufpr.web.types.dtos.EmployeeDTO;
 import ufpr.web.types.dtos.EquipmentCategoryDTO;
+import ufpr.web.types.dtos.MaintenanceRequestDTO;
+import ufpr.web.entities.MaintenanceRequest;
+import ufpr.web.types.enums.RequestStatus;
 
 @Component
 @AllArgsConstructor
@@ -22,6 +28,12 @@ public class dataLoader implements ApplicationRunner{
 
     @Autowired
     private EquipmentCategoryService equipmentCategoryService;
+
+    @Autowired
+    private MaintenanceRequestService maintenanceRequestService;
+
+    @Autowired
+    private CustomerService customerService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception{
@@ -98,6 +110,66 @@ public class dataLoader implements ApplicationRunner{
             .build()
         );
         
+        MaintenanceRequest request1 = maintenanceRequestService.save(
+            MaintenanceRequest.builder()
+                .equipmentDescription("Notebook Dell Latitude")
+                .equipmentCategory(equipmentCategoryService.findByName("Notebook"))
+                .equipmentDefect("Não liga")
+                .status(RequestStatus.ABERTA)
+                .registryDate(LocalDateTime.now().minusDays(5))
+                .customer(customerService.findByCpf("10120230344"))
+                .build()
+        );
+
+        maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Notebook Acer")
+            .equipmentCategory(equipmentCategoryService.findByName("Notebook"))
+            .equipmentDefect("Tela quebrada")
+            .status(RequestStatus.ORÇADA)
+            .registryDate(LocalDateTime.now().minusDays(4))
+            .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
+
+        maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Desktop Lenovo")
+            .equipmentCategory(equipmentCategoryService.findByName("Desktop"))
+            .equipmentDefect("Fonte queimada")
+            .status(RequestStatus.APROVADA)
+            .registryDate(LocalDateTime.now().minusDays(3))
+            .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
+
+        maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Mouse Razer")
+            .equipmentCategory(equipmentCategoryService.findByName("Mouse"))
+            .equipmentDefect("Scroll com defeito")
+            .status(RequestStatus.REJEITADA)
+            .registryDate(LocalDateTime.now().minusDays(2))
+            .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
+
+        maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Teclado Corsair")
+            .equipmentCategory(equipmentCategoryService.findByName("Teclado"))
+            .equipmentDefect("LEDs queimados")
+            .status(RequestStatus.ARRUMADA)
+            .registryDate(LocalDateTime.now().minusDays(1))
+            .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
+
+        maintenanceRequestService.save(MaintenanceRequest.builder()
+            .equipmentDescription("Impressora HP")
+            .equipmentCategory(equipmentCategoryService.findByName("Impressora"))
+            .equipmentDefect("Papel atolando")
+            .status(RequestStatus.PAGA)
+            .registryDate(LocalDateTime.now())
+            .customer(customerService.findByCpf("10120230344"))
+            .build()
+        );
     }
 
 }

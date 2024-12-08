@@ -82,4 +82,9 @@ public class EquipmentCategoryService {
         return categoryDTOs;
     }
 
+    public EquipmentCategory findByName(String name) {
+        return equipmentCategoryRepository.findByName(name)
+            .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+    }
+
 }

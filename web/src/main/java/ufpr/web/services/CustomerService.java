@@ -88,4 +88,9 @@ public class CustomerService {
             customer.getAddress().getComplement()
         );
     }
+
+    public Customer findByCpf(String cpf) {
+        return customerRepository.findByCpf(cpf)
+            .orElseThrow(() -> new RuntimeException("Customer not found"));
+    }
 }
