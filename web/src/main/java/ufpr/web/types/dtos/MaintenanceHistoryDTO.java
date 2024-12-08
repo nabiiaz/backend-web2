@@ -1,6 +1,7 @@
 package ufpr.web.types.dtos;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,6 @@ public class MaintenanceHistoryDTO {
     private RequestStatus status;
     private String action;
     private Long employeeId;
-    private Date actionDate;
+    private LocalDateTime actionDate;
     private EmployeeDTO employeeDTO;
 }
